@@ -18,6 +18,8 @@ module.exports = getAllUser;
 
 const signup = async (req, res, next) => {
     const { name, email, password } = req.body;
+    // const  email = req.body;
+    // const  password = req.body;
     let existingUser;
     try {
         existingUser = await User.findOne({ email });
@@ -29,13 +31,13 @@ const signup = async (req, res, next) => {
             .status(400)
             .json({ message: "User Already Exists! Login Instead" });
     }
-    const hashedPassword = bcrypt.hashSync(password);
+    // const hashedPassword = bcrypt.hashSync(password);
 
     const user = new User({
         name,
         email,
-        password: hashedPassword,
-        blogs: [],
+        password,
+        // blogs: [],
     });
 
     try {

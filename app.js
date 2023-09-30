@@ -4,7 +4,7 @@ const userRouter = require('./routes/user-routes.js');
 
 const app = express();
 
-// app.use(express.json());
+app.use(express.json());
 app.use("/api/user", userRouter);
 
 mongoose.connect("mongodb+srv://bhoomikahm18:bhoomi123@cluster0.5qlvwpp.mongodb.net/Blog?retryWrites=true&w=majority")
