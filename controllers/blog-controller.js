@@ -1,8 +1,8 @@
 // import mongoose from "mongoose";
-import Blog from "../model/Blog";
+const Blog = require("../model/Blog");
 // import User from "../model/User";
 
-export const getAllBlogs = async (req, res, next) => {
+const getAllBlogs = async (req, res, next) => {
     let blogs;
     try {
         blogs = await Blog.find().populate("user");
@@ -14,6 +14,7 @@ export const getAllBlogs = async (req, res, next) => {
     }
     return res.status(200).json({ blogs });
 };
+module.exports = getAllBlogs;
 
 // export const addBlog = async (req, res, next) => {
 //     const { title, description, image, user } = req.body;
