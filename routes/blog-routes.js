@@ -11,7 +11,7 @@ blogRouter.get("/", getAllBlogs);
 blogRouter.post("/add", addBlog);
 blogRouter.put("/update/:id", updateBlog);
 blogRouter.get("/:id", getById);
-// blogRouter.delete("/:id", deleteBlog);
+blogRouter.delete("/:id", deleteBlog);
 // blogRouter.get("/user/:id", getByUserId);
 
 module.exports = blogRouter;
