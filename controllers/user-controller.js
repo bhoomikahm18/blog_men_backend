@@ -13,6 +13,7 @@ const getAllUser = async (req, res, next) => {
     }
     return res.status(200).json({ users });
 };
+
 module.exports = getAllUser;
 
 // const signup = async (req, res, next) => {
