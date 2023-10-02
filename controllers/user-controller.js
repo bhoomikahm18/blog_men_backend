@@ -1,7 +1,7 @@
 const User = require("../model/User.js");
 const bcrypt = require("bcryptjs");
 
-const getAllUser = async (req, res, next) => {
+module.exports.getAllUser = async (req, res, next) => {
     let users;
     try {
         users = await User.find();
@@ -14,12 +14,8 @@ const getAllUser = async (req, res, next) => {
     return res.status(200).json({ users });
 };
 
-module.exports = getAllUser;
-
-const signup = async (req, res, next) => {
+module.exports.signup = async (req, res, next) => {
     const { name, email, password } = req.body;
-    // const  email = req.body;
-    // const  password = req.body;
     let existingUser;
     try {
         existingUser = await User.findOne({ email });
@@ -37,7 +33,7 @@ const signup = async (req, res, next) => {
         name,
         email,
         password: hashedPassword,
-        // blogs: [],
+        blogs: [],
     });
 
     try {
@@ -48,9 +44,9 @@ const signup = async (req, res, next) => {
     return res.status(201).json({ user });
 };
 
-module.exports = signup;
 
-const login = async (req, res, next) => {
+
+module.exports.login = async (req, res, next) => {
     const { email, password } = req.body;
     let existingUser;
     try {
@@ -71,4 +67,6 @@ const login = async (req, res, next) => {
         .json({ message: "Login Successfull", user: existingUser });
 };
 
-module.exports = login;
+// module.exports = getAllUser;
+// module.exports = signup;
+// module.exports = login;

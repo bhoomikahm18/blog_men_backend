@@ -2,10 +2,10 @@ const mongoose = require("mongoose");
 const Blog = require("../model/Blog");
 const User = require("../model/User");
 
-const getAllBlogs = async (req, res, next) => {
+module.exports.getAllBlogs = async (req, res, next) => {
     let blogs;
     try {
-        blogs = await Blog.find().populate("user");
+        blogs = await Blog.find({}).populate("user");
     } catch (err) {
         return console.log(err);
     }
@@ -14,9 +14,8 @@ const getAllBlogs = async (req, res, next) => {
     }
     return res.status(200).json({ blogs });
 };
-module.exports = getAllBlogs;
 
-const addBlog = async (req, res, next) => {
+module.exports.addBlog = async (req, res, next) => {
     const { title, description, image, user } = req.body;
 
     let existingUser;
@@ -26,7 +25,7 @@ const addBlog = async (req, res, next) => {
         return console.log(err);
     }
     if (!existingUser) {
-        return res.status(400).json({ message: "Unable TO FInd User By This ID" });
+        return res.status(400).json({ message: "Unable TO Find User By This ID" });
     }
     const blog = new Blog({
         title,
@@ -36,8 +35,8 @@ const addBlog = async (req, res, next) => {
     });
     try {
         const session = await mongoose.startSession();
-        session.startTransaction();
-        await blog.save();
+        session.startTransaction({ session });
+        await blog.save({ session });
         existingUser.blogs.push(blog);
         await existingUser.save({ session });
         await session.commitTransaction();
@@ -49,16 +48,14 @@ const addBlog = async (req, res, next) => {
     return res.status(200).json({ blog });
 };
 
-module.exports = addBlog;
-
-const updateBlog = async (req, res, next) => {
+module.exports.updateBlog = async (req, res, next) => {
     const { title, description } = req.body;
     const blogId = req.params.id;
     let blog;
     try {
         blog = await Blog.findByIdAndUpdate(blogId, {
-            title,
-            description,
+            title: title,
+            description: description,
         })
     } catch (err) {
         return console.log(err);
@@ -69,13 +66,11 @@ const updateBlog = async (req, res, next) => {
     return res.status(200).json({ blog });
 };
 
-module.exports = updateBlog;
-
-const getById = async (req, res, next) => {
+module.exports.getById = async (req, res, next) => {
     const id = req.params.id;
     let blog;
     try {
-        blog = await Blog.findById(id);
+        blog = await Blog.findById(id).populate('user');
     } catch (err) {
         return console.log(err);
     }
@@ -84,16 +79,15 @@ const getById = async (req, res, next) => {
     }
     return res.status(200).json({ blog });
 };
-module.exports = getById;
 
-const deleteBlog = async (req, res, next) => {
+module.exports.deleteBlog = async (req, res, next) => {
     const id = req.params.id;
 
     let blog;
     try {
         blog = await Blog.findByIdAndRemove(id).populate("user");
         await blog.user.blogs.pull(blog);
-        await blog.user.save();
+        await blog.user.save({});
     } catch (err) {
         console.log(err);
     }
@@ -102,19 +96,17 @@ const deleteBlog = async (req, res, next) => {
     }
     return res.status(200).json({ message: "Successfully Delete" });
 };
-module.exports = deleteBlog;
 
-// const getByUserId = async (req, res, next) => {
-//     const userId = req.params.id;
-//     let userBlogs;
-//     try {
-//         userBlogs = await User.findById(userId).populate("blogs");
-//     } catch (err) {
-//         return console.log(err);
-//     }
-//     if (!userBlogs) {
-//         return res.status(404).json({ message: "No Blog Found" });
-//     }
-//     return res.status(200).json({ user: userBlogs });
-// };
-// module.exports = getByUserId;
+module.exports.getByUserId = async (req, res, next) => {
+    const userId = req.params.id;
+    let userBlogs;
+    try {
+        userBlogs = await User.findById(userId).populate("blogs");
+    } catch (err) {
+        return console.log(err);
+    }
+    if (!userBlogs) {
+        return res.status(404).json({ message: "No Blog Found" });
+    }
+    return res.status(200).json({ user: userBlogs });
+};
