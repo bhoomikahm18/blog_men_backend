@@ -49,20 +49,23 @@ module.exports.addBlog = async (req, res, next) => {
 };
 
 module.exports.updateBlog = async (req, res, next) => {
-    const { title, description } = req.body;
+    const { title, description, image } = req.body;
     const blogId = req.params.id;
     let blog;
     try {
-        blog = await Blog.findByIdAndUpdate(blogId, {
+        await Blog.updateOne({ "_id": blogId }, {
             title: title,
             description: description,
-        })
+            image: image,
+        });
+        blog = await Blog.findById(blogId);
     } catch (err) {
         return console.log(err);
     }
     if (!blog) {
         return res.status(500).json({ message: "Unable To Update The Blog" });
     }
+
     return res.status(200).json({ blog });
 };
 
